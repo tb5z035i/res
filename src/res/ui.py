@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import time
+
 import numpy as np
 from PIL import Image
 
-from res.api import segment
-from res.backends import BACKEND_REGISTRY
+from res.backends import get_backend, BACKEND_REGISTRY
 
 
 def _available_backends() -> list[str]:
@@ -22,24 +23,46 @@ def _run(image: np.ndarray | None, prompt: str, backend_name: str):
     if not prompt.strip():
         raise ValueError("Please enter a text prompt.")
 
-    results = segment(image, prompt, backend=backend_name)
+    timings: list[str] = []
+
+    t0 = time.perf_counter()
+    engine = get_backend(backend_name)
+    t1 = time.perf_counter()
+    timings.append(f"Backend init: {t1 - t0:.3f}s")
+
+    t2 = time.perf_counter()
+    results = engine.segment(image, prompt)
+    t3 = time.perf_counter()
+    timings.append(f"Segmentation: {t3 - t2:.3f}s")
+
     if not results:
-        return None, None
+        summary = "No results found.\n" + "\n".join(timings)
+        return None, None, summary
 
     best = max(results, key=lambda r: r.score)
 
-    # Overlay: original with coloured mask blended on top
-    h, w = image.shape[:2]
+    t4 = time.perf_counter()
     overlay = image.copy()
-    colour = np.array([30, 144, 255], dtype=np.uint8)  # dodger-blue
+    colour = np.array([30, 144, 255], dtype=np.uint8)
     mask_bool = best.mask > 0
     overlay[mask_bool] = (
         overlay[mask_bool].astype(np.float32) * 0.5
         + colour.astype(np.float32) * 0.5
     ).astype(np.uint8)
-
     mask_pil = Image.fromarray(best.mask, mode="L")
-    return overlay, mask_pil
+    t5 = time.perf_counter()
+    timings.append(f"Post-process: {t5 - t4:.3f}s")
+
+    total = t5 - t0
+    timings.append(f"**Total: {total:.3f}s**")
+
+    result_info = (
+        f"Found {len(results)} result(s) | "
+        f"best: label={best.label!r}, score={best.score:.4f}, bbox={best.bbox}"
+    )
+    summary = result_info + "\n\n" + " | ".join(timings)
+
+    return overlay, mask_pil, summary
 
 
 def build_ui(default_backend: str | None = None):
@@ -68,11 +91,12 @@ def build_ui(default_backend: str | None = None):
             with gr.Column():
                 overlay_output = gr.Image(type="numpy", label="Overlay")
                 mask_output = gr.Image(type="pil", label="Mask (downloadable)")
+                timing_output = gr.Markdown(label="Timing")
 
         run_btn.click(
             fn=_run,
             inputs=[img_input, prompt_input, backend_dropdown],
-            outputs=[overlay_output, mask_output],
+            outputs=[overlay_output, mask_output, timing_output],
         )
 
     return app

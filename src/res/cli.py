@@ -48,6 +48,16 @@ def segment_cmd(image: str, prompt: str, backend: str, output: str) -> None:
         click.echo(f"       overlay -> {overlay_path}")
 
 
+@main.command("backends")
+def backends_cmd() -> None:
+    """List all registered backends and their availability."""
+    for name in sorted(BACKEND_REGISTRY):
+        cls = BACKEND_REGISTRY[name]
+        available = cls().is_available()
+        status = click.style("available", fg="green") if available else click.style("not available", fg="red")
+        click.echo(f"  {name:20s} {status}")
+
+
 @main.command("ui")
 @click.option("--backend", default=None, help="Default backend for the UI.")
 @click.option("--port", default=7860, show_default=True, type=int, help="Port for the Gradio server.")

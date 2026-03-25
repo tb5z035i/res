@@ -6,16 +6,16 @@ Extensible Python package for referring expression segmentation with a pluggable
 
 ```bash
 # Core (numpy, Pillow, click)
-uv pip install -e .
+uv sync
 
 # With Gradio UI
-uv pip install -e '.[ui]'
+uv sync --extra ui
 
 # With dev tools (pytest, coverage)
-uv pip install -e '.[dev]'
+uv sync --extra dev
 
 # Everything (runtime optional deps)
-uv pip install -e '.[all]'
+uv sync --all-extras
 ```
 
 ## Usage
@@ -63,9 +63,42 @@ Upload an image, enter a text prompt, pick a backend, and click **Segment**. The
 | Name | Status | Description |
 |------|--------|-------------|
 | `mock` | Ready | Deterministic elliptical mask (no GPU needed) |
+| `sam3` | Ready | [SAM 3](https://github.com/facebookresearch/sam3) -- Segment Anything with Concepts |
 | `sam2` | Placeholder | SAM 2 |
 | `grounded_sam2` | Placeholder | Grounded-SAM-2 |
 | `qwen3vl_sam2` | Placeholder | Qwen3-VL + SAM2 |
+
+### SAM 3 Setup
+
+SAM 3 is included as a git submodule under `third_party/sam3`. To use it:
+
+```bash
+# Clone with submodules (if you haven't already)
+git submodule update --init --recursive
+
+# Install SAM 3 and its deps (requires CUDA GPU + PyTorch >= 2.7)
+uv pip install torch>=2.7 torchvision --index-url https://download.pytorch.org/whl/cu126
+uv pip install -e third_party/sam3
+```
+
+**Checkpoint configuration** -- set the `RES_SAM3_CHECKPOINT` env var to point at a local weights file:
+
+```bash
+export RES_SAM3_CHECKPOINT=/path/to/sam3.pt
+```
+
+If unset, SAM 3 auto-downloads from HuggingFace on first run (requires `huggingface-cli login`).
+
+Then use it via the API or CLI:
+
+```bash
+uv run res segment --image photo.jpg --prompt "the red car" --backend sam3 --output ./out/
+```
+
+```python
+import res
+results = res.segment("photo.jpg", "the red car on the left", backend="sam3")
+```
 
 ## Extending -- Adding a New Backend
 
