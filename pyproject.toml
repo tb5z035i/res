@@ -1,0 +1,29 @@
+[project]
+name = "res"
+version = "0.1.0"
+description = "Referring Expression Segmentation -- extensible backend system with CLI and Gradio UI"
+readme = "README.md"
+authors = [
+    { name = "Beiwen Tian", email = "tianbeiwen88@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "Pillow",
+    "click",
+]
+
+[project.optional-dependencies]
+ui = ["gradio>=5"]
+sam2 = []
+grounded-sam2 = []
+qwen3vl-sam2 = []
+dev = ["pytest", "pytest-cov"]
+all = ["gradio>=5"]
+
+[project.scripts]
+res = "res.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.9.26,<0.10.0"]
+build-backend = "uv_build"
