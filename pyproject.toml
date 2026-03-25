@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Beiwen Tian", email = "tianbeiwen88@gmail.com" }
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = [
     "numpy",
     "Pillow",
@@ -16,7 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 ui = ["gradio>=5"]
 sam2 = []
-sam3 = ["torch>=2.7", "torchvision", "sam3", "einops", "pycocotools", "psutil"]
+sam3 = ["torch>=2.5", "torchvision", "sam3", "einops", "pycocotools", "psutil"]
 grounded-sam2 = []
 qwen3vl-sam2 = []
 dev = ["pytest", "pytest-cov"]
