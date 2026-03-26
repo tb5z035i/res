@@ -48,7 +48,7 @@ class EfficientSAM3Backend(Backend):
     def __init__(
         self,
         device: str | None = None,
-        confidence_threshold: float = 0.5,
+        confidence_threshold: float = 0.1,
         checkpoint_path: str | None = None,
         backbone_type: str = "tinyvit",
         model_name: str = "11m",

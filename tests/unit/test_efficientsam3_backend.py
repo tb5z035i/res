@@ -22,7 +22,7 @@ class TestEfficientSAM3Backend:
     def test_defaults(self) -> None:
         b = EfficientSAM3Backend()
         assert b._device is None
-        assert b._confidence_threshold == 0.5
+        assert b._confidence_threshold == 0.1
         assert b._checkpoint_path is None
         assert b._backbone_type == "tinyvit"
         assert b._model_name == "11m"

@@ -20,7 +20,7 @@ sam3 = ["torch>=2.5", "torchvision", "sam3", "einops", "pycocotools", "psutil"]
 grounded-sam2 = []
 qwen3vl-sam2 = []
 nanoowl-nanosam = ["torch>=2.0", "torchvision", "nanoowl", "nanosam", "transformers", "tensorrt", "torch2trt", "onnxscript", "ml-dtypes>=0.5.0", "timm"]
-efficientsam3 = ["torch>=2.5", "torchvision", "sam3", "einops", "timm", "huggingface_hub"]
+efficientsam3 = ["torch>=2.5", "torchvision", "sam3", "einops", "timm", "huggingface_hub", "opencv-python"]
 dev = ["pytest", "pytest-cov"]
 all = ["gradio>=5"]
 
