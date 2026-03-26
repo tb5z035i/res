@@ -42,9 +42,13 @@ from res.backends.sam2 import SAM2Backend  # noqa: E402
 from res.backends.sam3 import SAM3Backend  # noqa: E402
 from res.backends.grounded_sam2 import GroundedSAM2Backend  # noqa: E402
 from res.backends.qwen3vl_sam2 import Qwen3VLSAM2Backend  # noqa: E402
+from res.backends.nanoowl_nanosam import NanoOwlNanoSamBackend  # noqa: E402
+from res.backends.efficientsam3 import EfficientSAM3Backend  # noqa: E402
 
 register_backend("mock", MockBackend)
 register_backend("sam2", SAM2Backend)
 register_backend("sam3", SAM3Backend)
 register_backend("grounded_sam2", GroundedSAM2Backend)
 register_backend("qwen3vl_sam2", Qwen3VLSAM2Backend)
+register_backend("nanoowl_nanosam", NanoOwlNanoSamBackend)
+register_backend("efficientsam3", EfficientSAM3Backend)

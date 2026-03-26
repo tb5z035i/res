@@ -1,3 +1,12 @@
 [submodule "third_party/sam3"]
 	path = third_party/sam3
 	url = https://github.com/facebookresearch/sam3.git
+[submodule "third_party/nanoowl"]
+	path = third_party/nanoowl
+	url = https://github.com/tb5z035i/nanoowl
+[submodule "third_party/nanosam"]
+	path = third_party/nanosam
+	url = https://github.com/tb5z035i/nanosam
+[submodule "third_party/efficientsam3"]
+	path = third_party/efficientsam3
+	url = https://github.com/SimonZeng7108/efficientsam3.git
