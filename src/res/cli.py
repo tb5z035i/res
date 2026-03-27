@@ -70,7 +70,7 @@ def ui_cmd(backend: str | None, port: int) -> None:
             "Gradio is not installed. Install with: uv pip install 'res[ui]'"
         )
     app = build_ui(default_backend=backend)
-    app.launch(server_port=port)
+    app.launch(server_port=port, server_name="0.0.0.0")
 
 
 if __name__ == "__main__":

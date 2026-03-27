@@ -57,6 +57,19 @@ def _run(args: list[str]) -> None:
     subprocess.check_call(cmd)
 
 
+def _simplify_onnx(onnx_path: str) -> str:
+    """Run onnxslim to simplify the ONNX graph for TensorRT compatibility."""
+    try:
+        import onnxslim
+    except ImportError:
+        click.echo("WARNING: onnxslim not installed, skipping ONNX simplification.", err=True)
+        return onnx_path
+    out = onnx_path.replace(".onnx", "_slim.onnx")
+    click.echo(f"Simplifying ONNX → {out}")
+    onnxslim.slim(onnx_path, out)
+    return out
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -130,6 +143,8 @@ def sam_mask_decoder(onnx_path: str | None, checkpoint: str | None, model_type: 
         click.echo(f"Exporting mask-decoder ONNX → {onnx_path}")
         run_export(model_type=model_type, checkpoint=checkpoint, output=onnx_path,
                    opset=16, return_single_mask=False)
+
+    onnx_path = _simplify_onnx(onnx_path)
 
     _run([
         f"--onnx={onnx_path}", f"--saveEngine={output}",

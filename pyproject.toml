@@ -19,7 +19,7 @@ sam2 = []
 sam3 = ["torch>=2.5", "torchvision", "sam3", "einops", "pycocotools", "psutil"]
 grounded-sam2 = []
 qwen3vl-sam2 = []
-nanoowl-nanosam = ["torch>=2.0", "torchvision", "nanoowl", "nanosam", "transformers", "tensorrt", "torch2trt", "onnxscript", "ml-dtypes>=0.5.0", "timm"]
+nanoowl-nanosam = ["torch>=2.0", "torchvision", "nanoowl", "nanosam", "transformers", "torch2trt", "onnxscript", "onnxslim", "ml-dtypes>=0.5.0", "timm"]
 efficientsam3 = ["torch>=2.5", "torchvision", "sam3", "einops", "timm", "huggingface_hub", "opencv-python"]
 dev = ["pytest", "pytest-cov"]
 all = ["gradio>=5"]
@@ -27,15 +27,22 @@ all = ["gradio>=5"]
 [project.scripts]
 res = "res.cli:main"
 
+[tool.uv]
+[[tool.uv.index]]
+name = "jetson"
+url = "https://pypi.jetson-ai-lab.io/jp6/cu126/+simple/"
+
 [tool.uv.sources]
+torch = { index = "jetson" }
+torchvision = { index = "jetson" }
 sam3 = { path = "third_party/efficientsam3/sam3", editable = true }
 nanoowl = { path = "third_party/nanoowl", editable = true }
 nanosam = { path = "third_party/nanosam", editable = true }
 torch2trt = { git = "https://github.com/NVIDIA-AI-IOT/torch2trt.git" }
 
 [tool.uv.extra-build-dependencies]
-torch2trt = ["tensorrt", "torch"]
+torch2trt = ["setuptools", "tensorrt", "torch", "nvidia-cudss-cu12"]
 
 [build-system]
-requires = ["uv_build>=0.9.26,<0.10.0"]
+requires = ["uv_build>=0.9.26,<0.10.0", "setuptools"]
 build-backend = "uv_build"

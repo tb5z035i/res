@@ -26,3 +26,6 @@ htmlcov/
 Thumbs.db
 
 *.engine
+*.deb
+*.log
+.gradio/

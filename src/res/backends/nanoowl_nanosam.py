@@ -108,20 +108,45 @@ class NanoOwlNanoSamBackend(Backend):
     def segment(self, image: np.ndarray, prompt: str) -> list[SegmentationResult]:
         self._ensure_models()
         from PIL import Image as PILImage
+        import time as _time, json as _json
 
         pil_image = PILImage.fromarray(image)
+
+        # #region agent log
+        _t0 = _time.perf_counter()
+        # #endregion
+
+        if not hasattr(self, '_text_cache') or self._text_cache_key != prompt:
+            self._text_cache = self._owl_predictor.encode_text([prompt])
+            self._text_cache_key = prompt
+
+        # #region agent log
+        _t1 = _time.perf_counter()
+        # #endregion
 
         detections = self._owl_predictor.predict(
             image=pil_image,
             text=[prompt],
-            text_encodings=None,
+            text_encodings=self._text_cache,
             threshold=self._detection_threshold,
         )
+
+        # #region agent log
+        _t2 = _time.perf_counter()
+        # #endregion
 
         if len(detections.boxes) == 0:
             return []
 
+        # #region agent log
+        _t3 = _time.perf_counter()
+        # #endregion
+
         self._sam_predictor.set_image(pil_image)
+
+        # #region agent log
+        _t4 = _time.perf_counter()
+        # #endregion
 
         results: list[SegmentationResult] = []
         for i in range(len(detections.boxes)):
@@ -135,7 +160,6 @@ class NanoOwlNanoSamBackend(Backend):
             mask_tensor, iou_preds, _ = self._sam_predictor.predict(
                 points, point_labels
             )
-            # Pick the mask with the best predicted IoU
             best_idx = iou_preds.argmax().item()
             mask_bool = mask_tensor[0, best_idx].detach().cpu().numpy() > 0
             mask_np = mask_bool.astype(np.uint8) * 255
@@ -148,6 +172,12 @@ class NanoOwlNanoSamBackend(Backend):
                     bbox=(x0, y0, x1, y1),
                 )
             )
+
+        # #region agent log
+        _t5 = _time.perf_counter()
+        _log = {"sessionId":"2b5219","location":"nanoowl_nanosam.py:segment","message":"timing","data":{"text_encode_ms":(_t1-_t0)*1000,"owl_predict_ms":(_t2-_t1)*1000,"sam_set_image_ms":(_t4-_t3)*1000,"sam_decode_loop_ms":(_t5-_t4)*1000,"total_ms":(_t5-_t0)*1000,"num_detections":len(detections.boxes)},"timestamp":_t5}
+        with open("/home/nvidia/workspace/res/.cursor/debug-2b5219.log","a") as _f: _f.write(_json.dumps(_log)+"\n")
+        # #endregion
 
         return results
 
