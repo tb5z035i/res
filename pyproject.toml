@@ -8,7 +8,7 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "numpy",
+    "numpy<2",
     "Pillow",
     "click",
 ]
@@ -19,7 +19,7 @@ sam2 = []
 sam3 = ["torch>=2.5", "torchvision", "sam3", "einops", "pycocotools", "psutil"]
 grounded-sam2 = []
 qwen3vl-sam2 = []
-nanoowl-nanosam = ["torch>=2.0", "torchvision", "nanoowl", "nanosam", "transformers", "tensorrt", "torch2trt", "onnxscript", "ml-dtypes>=0.5.0", "timm"]
+nanoowl-nanosam = ["torch>=2.0", "torchvision", "nanoowl", "nanosam", "transformers", "tensorrt", "torch2trt", "onnxscript", "ml-dtypes", "timm"]
 efficientsam3 = ["torch>=2.5", "torchvision", "sam3", "einops", "timm", "huggingface_hub", "opencv-python"]
 dev = ["pytest", "pytest-cov"]
 all = ["gradio>=5"]
